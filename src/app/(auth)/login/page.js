@@ -8,11 +8,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { logIn } from "@/provider/redux/slices/authSlice";
 
+import { useCookies } from "next-client-cookies";
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default () => {
   const dispatch = useDispatch();
+  const cookies = useCookies();
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
@@ -38,6 +41,7 @@ export default () => {
       dispatch(logIn(values)).then((res) => {
         console.log("res", res);
         if (res?.payload?.id) {
+          cookies.set("currUser", JSON.stringify(res.payload));
           router.push("/home");
         }
       });

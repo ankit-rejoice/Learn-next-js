@@ -1,7 +1,11 @@
 import { axiosInstance } from "@/api/base";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+
+
 import { toast } from "react-toastify";
+
+
 
 const initialState = {
   user: null,
@@ -179,6 +183,7 @@ export const authSlice = createSlice({
           state.user = userInfo;
           state.status = "succeeded";
 
+          
           localStorage.setItem("currUser", JSON.stringify(userInfo));
           localStorage.setItem("Token", JSON.stringify(token));
           localStorage.setItem(
