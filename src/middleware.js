@@ -15,4 +15,14 @@ export default function middleware(request) {
     const absolutePath = new URL("/home", request.nextUrl.origin);
     return NextResponse.redirect(absolutePath.toString());
   }
+
+  if (currentUser && request.nextUrl.pathname === "/") {
+    const absolutePath = new URL("/home", request.nextUrl.origin);
+    return NextResponse.redirect(absolutePath.toString());
+  }
+
+  if (!currentUser && request.nextUrl.pathname === "/") {
+    const absolutePath = new URL("/login", request.nextUrl.origin);
+    return NextResponse.redirect(absolutePath.toString());
+  }
 }
