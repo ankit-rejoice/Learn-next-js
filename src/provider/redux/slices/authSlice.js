@@ -219,20 +219,6 @@ export const authSlice = createSlice({
         state.status = "loading";
       })
       .addCase(verifyOTP.fulfilled, (state, action) => {
-        if (action?.payload?.Verified) {
-          state.email = action?.payload?.email;
-          state.otp = action?.payload?.OTP;
-          state.otp_verified = action?.payload?.Verified;
-
-          localStorage.setItem(
-            "verified_email",
-            JSON.stringify(action?.payload?.email)
-          );
-          localStorage.setItem(
-            "verified_otp",
-            JSON.stringify(action?.payload?.OTP)
-          );
-        }
         state.status = "succeeded";
       })
       .addCase(verifyOTP.rejected, (state, action) => {
