@@ -29,11 +29,15 @@ function VerifyEmailPage() {
     dispatch(verifyOTP(data)).then((res) => {
       console.log("res==>", res.payload);
 
-      if (res.payload === "User verified successfully") {
-        router.push(`/forget-password/send-otp?email=${decodedPayload?.email}`);
+      if (
+        res.payload === "User verified successfully" ||
+        res.payload === "User already verified!"
+      ) {
+        // router.push(`/login?email=${decodedPayload?.email}`);
       } else {
-        router.push(`/login?email=${decodedPayload?.email}`);
+        // router.push(`/forget-password/send-otp?email=${decodedPayload?.email}`);
       }
+      router.push(`/forget-password/send-otp?email=${decodedPayload?.email}`);
     });
   }, []);
   return <div>VerifyEmailPage</div>;

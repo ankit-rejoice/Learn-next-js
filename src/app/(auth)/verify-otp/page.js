@@ -34,7 +34,7 @@ export default () => {
           res?.payload?.message === "User verified successfully" ||
           res?.payload?.message === "User already verified!"
         ) {
-          router.push(`/login?email=${values?.email}`);
+          // router.push(`/login?email=${values?.email}`);
         } else {
           toast.error(res?.payload?.message);
         }

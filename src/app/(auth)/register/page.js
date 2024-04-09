@@ -41,9 +41,13 @@ export default () => {
       dispatch(signUp(values)).then((res) => {
         console.log("res==>", res);
         if (res?.payload?.data?.id) {
-          router.push(`/verify-otp?email=${values?.email}`);
+          // router.push(`/verify-otp?email=${values?.email}`);
+
+          toast.success(
+            "Registration successful Please Check email for varification"
+          );
         } else {
-          toast.error(res?.payload?.message)
+          toast.error(res?.payload?.message);
         }
       });
     },
@@ -181,7 +185,7 @@ export default () => {
           </div>
         </div>
       </section>
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 };

@@ -78,7 +78,7 @@ export const sendOTP = createAsyncThunk(
   async (body) => {
     try {
       const response = await axiosInstance.post(`send-otp`, body);
-      toast.success("OTP sent successfully");
+      // toast.success("OTP sent successfully");
       return response.data;
     } catch (e) {
       toast.error(e?.response?.data?.message);
