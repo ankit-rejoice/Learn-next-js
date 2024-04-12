@@ -38,21 +38,21 @@ export default () => {
   });
   return (
     <>
-      <section class="bg-gray-50 :bg-gray-900">
-        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <div class="w-full bg-white rounded-lg shadow :border md:mt-0 sm:max-w-md xl:p-0 :bg-gray-800 :border-gray-700">
-            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl :text-white">
+      <section className="bg-gray-50 :bg-gray-900">
+        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+          <div className="w-full bg-white rounded-lg shadow :border md:mt-0 sm:max-w-md xl:p-0 :bg-gray-800 :border-gray-700">
+            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl :text-white">
                 Sign in to your account
               </h1>
               <form
                 onSubmit={validation.handleSubmit}
-                class="space-y-4 md:space-y-6"
+                className="space-y-4 md:space-y-6"
               >
                 <div>
                   <label
                     for="oldpassword"
-                    class="block mb-2 text-sm font-medium text-gray-900 :text-white"
+                    className="block mb-2 text-sm font-medium text-gray-900 :text-white"
                   >
                     Old Password
                   </label>
@@ -60,7 +60,7 @@ export default () => {
                     type="password"
                     name="oldpassword"
                     id="oldpassword"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500"
                     placeholder="••••••••"
                     required=""
                     value={validation.values.oldpassword}
@@ -77,7 +77,7 @@ export default () => {
                 <div>
                   <label
                     for="password"
-                    class="block mb-2 text-sm font-medium text-gray-900 :text-white"
+                    className="block mb-2 text-sm font-medium text-gray-900 :text-white"
                   >
                     Password
                   </label>
@@ -86,7 +86,7 @@ export default () => {
                     name="password"
                     id="password"
                     placeholder="••••••••"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500"
                     required=""
                     value={validation.values.password}
                     onBlur={validation.handleBlur}
@@ -101,7 +101,7 @@ export default () => {
                 <div>
                   <label
                     for="password"
-                    class="block mb-2 text-sm font-medium text-gray-900 :text-white"
+                    className="block mb-2 text-sm font-medium text-gray-900 :text-white"
                   >
                     Confirm Password
                   </label>
@@ -110,7 +110,7 @@ export default () => {
                     name="confirm_password"
                     id="confirm_password"
                     placeholder="••••••••"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500"
                     required=""
                     value={validation.values.confirm_password}
                     onBlur={validation.handleBlur}

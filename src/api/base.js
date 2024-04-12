@@ -1,9 +1,7 @@
 import axios from "axios";
 
-
 import { BASE_URL } from "./url";
-
-const authHeader =""
+import authHeader from "@/helpers/jwt-token-access/auth-token-header";
 
 export const API_PREFIX = "";
 
@@ -11,12 +9,10 @@ const axiosApi = axios.create({
   baseURL: `${BASE_URL}/${API_PREFIX}`,
 });
 
-
-
 export const axiosInstance = axiosApi;
 export async function get(url, config = {}) {
   return await axiosApi
-    .get(url, { params: config, headers: authHeader() })
+    .get(url, { params: config })
     .then((response) => response)
     .catch((error) => error.response);
 }
@@ -30,7 +26,7 @@ export async function patch(url, data, config = {}) {
 
 export async function post(url, data, config = {}) {
   return axiosApi
-    .post(url, { ...data }, { ...config, headers: authHeader() })
+    .post(url, { ...data }, { ...config })
     .then((response) => response)
     .catch((error) => error.response);
 }

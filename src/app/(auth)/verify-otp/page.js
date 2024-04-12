@@ -6,16 +6,17 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
-import { verifyOTP } from "@/provider/redux/slices/authSlice";
+import { Verify2FACode, verifyOTP } from "@/provider/redux/slices/authSlice";
 import { ToastContainer, toast } from "react-toastify";
+import { useCookies } from "next-client-cookies";
 
 export default () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const cookies = useCookies();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
-
-  console.log("email: " + email);
+  const user_id = searchParams.get("user_id");
 
   const validation = useFormik({
     enableReinitialize: true,
@@ -23,23 +24,46 @@ export default () => {
     initialValues: {
       otp: "",
       email: email,
+      user_id: user_id,
     },
     validationSchema: Yup.object({
       otp: Yup.string().required("Otp is required"),
     }),
     onSubmit: (values) => {
       console.log(JSON.stringify(values));
-      dispatch(verifyOTP(values)).then((res) => {
-        if (
-          res?.payload?.message === "User verified successfully" ||
-          res?.payload?.message === "User already verified!"
-        ) {
-          // router.push(`/login?email=${values?.email}`);
-        } else {
-          toast.error(res?.payload?.message);
-        }
-        console.log("res=>", res);
-      });
+
+      if (user_id) {
+        let payload = {
+          user_id: values.user_id,
+          otp: values.otp,
+          inside_flage: true,
+        };
+
+        dispatch(Verify2FACode(payload)).then((res) => {
+          if (res?.payload?.message === "Invalid verification code") {
+            toast.error("Invalid verification code, please try again");
+          } else if (res?.payload?.id) {
+            console.log("currUser", res.payload);
+
+            cookies.set("currUser", JSON.stringify(res.payload));
+            router.push("/home");
+
+            // dispatch(getProfile());
+          }
+        });
+      } else {
+        dispatch(verifyOTP(values)).then((res) => {
+          if (
+            res?.payload?.message === "User verified successfully" ||
+            res?.payload?.message === "User already verified!"
+          ) {
+            // router.push(`/login?email=${values?.email}`);
+          } else {
+            toast.error(res?.payload?.message);
+          }
+          console.log("res=>", res);
+        });
+      }
     },
   });
   return (
@@ -60,7 +84,7 @@ export default () => {
                     Enter OTP
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     name="otp"
                     id="otp"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500"

@@ -19,9 +19,13 @@ export default function RootLayout({ children }) {
     <ReduxProvider>
       <CookiesProvider>
         <html lang="en">
+          <head>
+          {/* <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" /> */}
+          </head>
           <body className={inter.className}>
             <Navbar />
             {children}
+            {/* <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script> */}
           </body>
         </html>
       </CookiesProvider>

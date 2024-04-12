@@ -1,4 +1,5 @@
 import { axiosInstance } from "@/api/base";
+import authHeader from "@/helpers/jwt-token-access/auth-token-header";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import { toast } from "react-toastify";
@@ -61,18 +62,6 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
-export const getProfile = createAsyncThunk(
-  "/authentication/getProfile",
-  async () => {
-    try {
-      const response = await axiosInstance.post(`profile`);
-      return response.data;
-    } catch (e) {
-      return e.response.data;
-    }
-  }
-);
-
 export const sendOTP = createAsyncThunk(
   "/authentication/sendOTP",
   async (body) => {
@@ -95,11 +84,42 @@ export const forgotPassword = createAsyncThunk(
       toast.success("Password Changed seccesfully");
       return response.data;
     } catch (e) {
-      toast.error(e?.response?.data?.message);
+      // toast.error(e?.response?.data?.message);
       return e.response.data;
     }
   }
 );
+
+export const activate2FA = createAsyncThunk(
+  "/authentication/activate2FA",
+  async () => {
+    try {
+      const response = await axiosInstance.get(`get-2FA-detail`,{
+        headers: authHeader(),
+      });
+
+      return response.data;
+    } catch (e) {
+      return e.response.data;
+    }
+  }
+);
+
+
+export const Verify2FACode = createAsyncThunk(
+  "/authentication/Verify2FACode",
+  async (body) => {
+    try {
+      const response = await axiosInstance.post(`verify-2FA-otp`,body);
+      return response.data;
+    } catch (e) {
+      return e.response.data;
+    }
+  }
+);
+
+
+
 
 export const authSlice = createSlice({
   name: "auth",
@@ -169,7 +189,7 @@ export const authSlice = createSlice({
         let userInfo = {
           accessToken: token?.accessToken,
           refreshToken: token?.refreshToken,
-
+          id : action?.payload?.id,
           email: action?.payload?.email,
         };
 
@@ -195,16 +215,7 @@ export const authSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
-      .addCase(getProfile.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(getProfile.fulfilled, (state, action) => {
-        console.log("action?", action?.payload);
-      })
-      .addCase(getProfile.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      })
+
       .addCase(forgotPassword.pending, (state) => {
         state.status = "loading";
       })
@@ -232,6 +243,41 @@ export const authSlice = createSlice({
         state.status = "succeeded";
       })
       .addCase(resetPassword.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(Verify2FACode.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(Verify2FACode.fulfilled, (state, action) => {
+        console.log("action?", action?.payload);
+        const token = action?.payload?.token;
+        let userInfo = {
+          accessToken: token?.accessToken,
+          refreshToken: token?.refreshToken,
+          id : action?.payload?.id,
+          email: action?.payload?.email,
+        };
+
+        if (token) {
+          state.isVisitor = false;
+          state.isLoggedIn = true;
+          state.user = userInfo;
+          state.status = "succeeded";
+
+          localStorage.setItem("currUser", JSON.stringify(userInfo));
+          localStorage.setItem("Token", JSON.stringify(token));
+          localStorage.setItem(
+            "accessToken",
+            JSON.stringify(token?.accessToken)
+          );
+          localStorage.setItem(
+            "refressToken",
+            JSON.stringify(token?.refreshToken)
+          );
+        }
+      })
+      .addCase(Verify2FACode.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

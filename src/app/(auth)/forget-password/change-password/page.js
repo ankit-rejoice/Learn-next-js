@@ -10,24 +10,35 @@ import { redirect } from "next/navigation";
 import { useRouter, useSearchParams } from "next/navigation";
 import { forgotPassword } from "@/provider/redux/slices/authSlice";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") || "";
+  const token = searchParams.get("token") || "";
+  const key = searchParams.get("key") || "";
+  const type = searchParams.get("type") || "";
+
+  const [header, payload, signature] = token.split(".");
+  const decodedPayload = JSON.parse(atob(payload));
+
+  const email = decodedPayload?.email;
+  const otp = parseInt(key);
 
   const validation = useFormik({
     enableReinitialize: true,
 
     initialValues: {
-      email: email,
-      otp: "",
-      NewPassword: "",
+      email_token: token,
+      otp: otp,
+      newpassword: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().required("Email is required"),
+      email_token: Yup.string().required("Email is required"),
       otp: Yup.string().required("OTP  is required"),
-      NewPassword: Yup.string()
+      newpassword: Yup.string()
         .min(6, "Password must be at least 6 characters")
         .required("Password is required"),
     }),
@@ -36,7 +47,22 @@ export default () => {
 
       dispatch(forgotPassword(values)).then((res) => {
         if (res?.payload?.message === "Password reset successfully") {
-          router.push(`/login?email=${values?.email}`);
+          router.push(`/login?email=${email}`);
+        } else {
+          toast.error(
+            <>
+              Link has expired.
+              <button
+                onClick={() =>
+                  router.push(`/forget-password/send-otp?email=${email}`)
+                }
+              >
+                Click here to resend link
+              </button>
+            </>,
+            { autoClose: false },
+            { position: "center" }
+          );
         }
       });
     },
@@ -54,10 +80,11 @@ export default () => {
                 onSubmit={validation.handleSubmit}
                 className="space-y-4 md:space-y-6"
               >
-                <div>
+                {/* <div>
                   <label
                     htmlFor="email"
                     className="block mb-2 text-sm font-medium text-gray-900 :text-white"
+                    hidden
                   >
                     Email
                   </label>
@@ -73,10 +100,10 @@ export default () => {
                     onBlur={validation.handleBlur}
                     onChange={validation.handleChange}
                   />
-                  {validation.errors.oldpassword &&
-                  validation.touched.oldpassword ? (
+                  {validation.errors.email &&
+                  validation.touched.email ? (
                     <div className="text-red-500">
-                      {validation.errors.oldpassword}
+                      {validation.errors.email}
                     </div>
                   ) : null}
                 </div>
@@ -101,7 +128,7 @@ export default () => {
                   {validation.errors.otp && validation.touched.otp ? (
                     <div className="text-red-500">{validation.errors.otp}</div>
                   ) : null}
-                </div>
+                </div> */}
                 <div>
                   <label
                     htmlFor="password"
@@ -111,19 +138,19 @@ export default () => {
                   </label>
                   <input
                     type="password"
-                    name="NewPassword"
-                    id="NewPassword"
+                    name="newpassword"
+                    id="newpassword"
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500"
                     required=""
-                    value={validation.values.NewPassword}
+                    value={validation.values.newpassword}
                     onBlur={validation.handleBlur}
                     onChange={validation.handleChange}
                   />
-                  {validation.errors.NewPassword &&
-                  validation.touched.NewPassword ? (
+                  {validation.errors.newpassword &&
+                  validation.touched.newpassword ? (
                     <div className="text-red-500">
-                      {validation.errors.NewPassword}
+                      {validation.errors.newpassword}
                     </div>
                   ) : null}
                 </div>
@@ -139,6 +166,7 @@ export default () => {
           </div>
         </div>
       </section>
+      <ToastContainer />
     </>
   );
 };
