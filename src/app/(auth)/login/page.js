@@ -42,7 +42,7 @@ export default () => {
         console.log("res", res);
         if (res?.payload?.id) {
           cookies.set("currUser", JSON.stringify(res.payload));
-          router.push("/home");
+          router.push("/update-profile");
         } else if (res?.payload?.data?.auth_2fa){
           router.push(`/verify-otp?user_id=${res?.payload?.data?.id}`);
         }

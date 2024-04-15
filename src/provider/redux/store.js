@@ -3,11 +3,11 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage/session";
 
 import authSlice from "./slices/authSlice";
-import profileSlice from "./slices/authSlice";
+import profileSlice from "./slices/profileSlice";
 
 const reducers = combineReducers({
   auth: authSlice,
-  profle: profileSlice,
+  profile: profileSlice,
 });
 
 const persistConfig = {

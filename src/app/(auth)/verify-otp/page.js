@@ -46,7 +46,7 @@ export default () => {
             console.log("currUser", res.payload);
 
             cookies.set("currUser", JSON.stringify(res.payload));
-            router.push("/home");
+            router.push("/update-profile");
 
             // dispatch(getProfile());
           }

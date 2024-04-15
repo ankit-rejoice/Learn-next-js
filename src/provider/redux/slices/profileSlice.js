@@ -29,9 +29,7 @@ export const profileSlice = createSlice({
         state.status = "pending";
       })
       .addCase(getProfile.fulfilled, (state, action) => {
-        console.log("api/lender", action.payload);
-        state.lenders = action.payload;
-        state.status = action.payload.status;
+        state.profile = action?.payload?.data;
       })
       .addCase(getProfile.rejected, (state, action) => {
         state.status = "failed";

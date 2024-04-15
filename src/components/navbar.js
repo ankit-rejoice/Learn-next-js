@@ -15,11 +15,18 @@ function Navbar() {
 
   const currUser = cookies.get("currUser");
 
-  const [isLogin, setIsLogin] = useState(cookies.get("currUser"));
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const [isLogin, setIsLogin] = useState(isLoggedIn);
 
   useEffect(() => {
     setIsLogin(currUser);
   }, [currUser]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      setIsLogin(isLoggedIn);
+    }
+  }, [isLoggedIn]);
 
   const handleLogoutClick = () => {
     router.push("/logout");

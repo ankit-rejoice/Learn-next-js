@@ -120,6 +120,23 @@ export const Verify2FACode = createAsyncThunk(
 
 
 
+export const activeOrdeactivate2FA = createAsyncThunk(
+  "/authentication/activate2FA",
+  async (body) => {
+    try {
+      const response = await axiosInstance.post(`manage-2FA`,body,{
+        headers: authHeader(),
+      });
+
+      return response.data;
+    } catch (e) {
+      return e.response.data;
+    }
+  }
+);
+
+
+
 
 export const authSlice = createSlice({
   name: "auth",
@@ -184,7 +201,7 @@ export const authSlice = createSlice({
         state.status = "loading";
       })
       .addCase(logIn.fulfilled, (state, action) => {
-        console.log("action?", action?.payload);
+        
         const token = action?.payload?.token;
         let userInfo = {
           accessToken: token?.accessToken,
@@ -250,7 +267,7 @@ export const authSlice = createSlice({
         state.status = "loading";
       })
       .addCase(Verify2FACode.fulfilled, (state, action) => {
-        console.log("action?", action?.payload);
+       
         const token = action?.payload?.token;
         let userInfo = {
           accessToken: token?.accessToken,
