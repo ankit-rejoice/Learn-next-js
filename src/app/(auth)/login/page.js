@@ -22,7 +22,6 @@ export default () => {
 
   const validation = useFormik({
     enableReinitialize: true,
-
     initialValues: {
       email: email,
       password: "",
@@ -36,14 +35,11 @@ export default () => {
         .required("Password is required"),
     }),
     onSubmit: (values) => {
-      console.log(JSON.stringify(values));
-
       dispatch(logIn(values)).then((res) => {
-        console.log("res", res);
         if (res?.payload?.id) {
           cookies.set("currUser", JSON.stringify(res.payload));
           router.push("/update-profile");
-        } else if (res?.payload?.data?.auth_2fa){
+        } else if (res?.payload?.data?.auth_2fa) {
           router.push(`/verify-otp?user_id=${res?.payload?.data?.id}`);
         }
       });
