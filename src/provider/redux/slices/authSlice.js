@@ -30,7 +30,7 @@ export const signUp = createAsyncThunk(
 export const logIn = createAsyncThunk("/authentication/login", async (body) => {
   try {
     const response = await axiosInstance.post(`login`, body);
-    toast.success("Login Successful");
+    
     return response.data;
   } catch (e) {
     toast.error(e?.response?.data?.message);

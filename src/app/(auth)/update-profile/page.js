@@ -1,5 +1,6 @@
 "use client";
-
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,7 @@ function UpdateProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [data, setData] = useState();
   const [profileData, setProfileData] = useState(profile);
+  const [profileImage, setProfileImage] = useState(null);
   // const [data, setData] = useState();
 
   useEffect(() => {
@@ -114,6 +116,21 @@ function UpdateProfilePage() {
       }
     });
   };
+
+  const validation = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      email: (profileData?.email)||"",
+      username: (profileData?.username)||"",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("Invalid email format")
+        .required("Email is required"),
+      username: Yup.string().required("Password is required"),
+    }),
+    onSubmit: (values) => {},
+  });
 
   return (
     <>
@@ -240,24 +257,31 @@ function UpdateProfilePage() {
                     </label>
                     <input
                       type="text"
-                      id="userName"
+                      id="username"
+                      name="username"
                       className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                       placeholder="User name"
-                      value={profileData?.username}
-                      disabled
+                      value={validation.values.email}
+                      onBlur={validation.handleBlur}
+                      onChange={validation.handleChange}
+                      
                     />
                   </div>
                   <div className="w-full  mb-4 lg:mt-6">
                     <label htmlFor="lastName" className=" dark:text-gray-300">
                       Email
                     </label>
+
                     <input
                       type="email"
                       id="email"
+                      name="email"
                       className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                       placeholder="Email"
-                      value={profileData?.email}
                       disabled
+                      value={validation.values.email}
+                      onBlur={validation.handleBlur}
+                      onChange={validation.handleChange}
                     />
                   </div>
                 </div>

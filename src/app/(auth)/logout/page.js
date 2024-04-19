@@ -17,7 +17,7 @@ function LogoutPage() {
   useLayoutEffect(() => {
     dispatch(logout());
     cookies.remove("currUser");
-    router.push("/login");  
+    router.push("/");  
   }, []);
 
   return <div>LogoutPage</div>;

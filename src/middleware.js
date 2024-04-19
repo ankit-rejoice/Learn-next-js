@@ -21,8 +21,8 @@ export default function middleware(request) {
     return NextResponse.redirect(absolutePath.toString());
   }
 
-  if (!currentUser && request.nextUrl.pathname === "/") {
-    const absolutePath = new URL("/login", request.nextUrl.origin);
-    return NextResponse.redirect(absolutePath.toString());
-  }
+  // if (!currentUser && request.nextUrl.pathname === "/") {
+  //   const absolutePath = new URL("/", request.nextUrl.origin);
+  //   return NextResponse.redirect(absolutePath.toString());
+  // }
 }

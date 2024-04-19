@@ -10,7 +10,7 @@ import { logIn } from "@/provider/redux/slices/authSlice";
 
 import { useCookies } from "next-client-cookies";
 
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default () => {
@@ -37,14 +37,17 @@ export default () => {
     onSubmit: (values) => {
       dispatch(logIn(values)).then((res) => {
         if (res?.payload?.id) {
+          toast.success("Login Successful");
           cookies.set("currUser", JSON.stringify(res.payload));
-          router.push("/update-profile");
+          router.push("/home");
         } else if (res?.payload?.data?.auth_2fa) {
+          toast.success("Verify OTP");
           router.push(`/verify-otp?user_id=${res?.payload?.data?.id}`);
         }
       });
     },
   });
+
   return (
     <>
       <section className="bg-gray-50 :bg-gray-900">

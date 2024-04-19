@@ -1,8 +1,10 @@
-// registerAction.js
+'use client'
 import axios from "axios";
 import { BASE_URL } from "@/api/url";
 
 export const registerAction = async (data) => {
+
+  console.log("registerAction called")
   try {
     const response = await axios.post(BASE_URL + "register", data, {
       headers: {
