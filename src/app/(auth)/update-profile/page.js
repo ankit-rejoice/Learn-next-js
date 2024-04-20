@@ -40,10 +40,12 @@ function UpdateProfilePage() {
   const updateProfileCallback = useCallback(async () => {
     console.log("use callback updateProfileAction");
     if (profileImage) {
-      res = await updateProfileAction(profileImage);
+      let res = await updateProfileAction(profileImage);
 
       if (res.status === 200) {
         toast.success("Profile Image updated successfully");
+        // setProfileData(null);
+        dispatch(getProfile());
       } else {
         toast.error(res);
       }
@@ -56,16 +58,14 @@ function UpdateProfilePage() {
   }, [profileImage]);
 
   useEffect(() => {
-    if (!profileData) {
-      dispatch(getProfile())
-        .then((res) => {
-          setProfileData(res?.payload?.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching profile:", error);
-        });
-    }
-  }, [profileData]);
+    dispatch(getProfile())
+      .then((res) => {
+        setProfileData(res?.payload?.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile:", error);
+      });
+  }, []);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -195,7 +195,7 @@ function UpdateProfilePage() {
                   style={{
                     backgroundImage: `url(${
                       profileData?.image
-                        ? BASE_URL.replace("api/v1/","") + profileData?.image
+                        ? BASE_URL.replace("api/v1/", "") + profileData?.image
                         : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
                     })`,
                   }}
