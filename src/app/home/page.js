@@ -4,7 +4,7 @@ import Image from 'next/image'
 function Home() {
   return (
     <div>
-       <Image src={`/home.jpg`} alt={`home.jpg`} 
+       <Image src={`/supermanlogo.jpg`} alt={`supermanlogo.jpg`} 
        width="1920" 
        height="1080" 
         // layout="fill" 

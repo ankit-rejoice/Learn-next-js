@@ -1,7 +1,7 @@
 "use client";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import {
@@ -19,6 +19,9 @@ import QRCodeModal from "@/components/QRCodeModal";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { registerAction } from "../register/registerAction";
+import { updateAction, updateProfileAction } from "./updateAction";
+import { BASE_URL } from "@/api/url";
 
 function UpdateProfilePage() {
   const { profile, status } = useSelector((state) => state.profile);
@@ -32,15 +35,37 @@ function UpdateProfilePage() {
   const [profileImage, setProfileImage] = useState(null);
   // const [data, setData] = useState();
 
+  console.log("profileData", profileData);
+
+  const updateProfileCallback = useCallback(async () => {
+    console.log("use callback updateProfileAction");
+    if (profileImage) {
+      res = await updateProfileAction(profileImage);
+
+      if (res.status === 200) {
+        toast.success("Profile Image updated successfully");
+      } else {
+        toast.error(res);
+      }
+    }
+    setProfileImage(null);
+  }, [profileImage]);
+
   useEffect(() => {
-    dispatch(getProfile())
-      .then((res) => {
-        setProfileData(res?.payload?.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching profile:", error);
-      });
-  }, []);
+    updateProfileCallback();
+  }, [profileImage]);
+
+  useEffect(() => {
+    if (!profileData) {
+      dispatch(getProfile())
+        .then((res) => {
+          setProfileData(res?.payload?.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching profile:", error);
+        });
+    }
+  }, [profileData]);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -120,8 +145,8 @@ function UpdateProfilePage() {
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
-      email: (profileData?.email)||"",
-      username: (profileData?.username)||"",
+      email: profileData?.email || "",
+      username: profileData?.username || "",
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -129,8 +154,21 @@ function UpdateProfilePage() {
         .required("Email is required"),
       username: Yup.string().required("Password is required"),
     }),
-    onSubmit: (values) => {},
+    onSubmit: async (values) => {
+      console.log("values", values);
+      const res = await updateAction(values);
+      console.log("res", res);
+      if (res?.state === 200) {
+        toast.success("User Name Upadated Successfully");
+      } else {
+        toast.error(res);
+      }
+    },
   });
+
+  const handleImageChange = (e) => {
+    setProfileImage(e.target.files[0]);
+  };
 
   return (
     <>
@@ -152,7 +190,17 @@ function UpdateProfilePage() {
               </h2>
 
               <div className="w-full rounded-sm bg-[url('https://images.unsplash.com/photo-1449844908441-8829872d2607?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw2fHxob21lfGVufDB8MHx8fDE3MTA0MDE1NDZ8MA&ixlib=rb-4.0.3&q=80&w=1080')] bg-cover bg-center bg-no-repeat items-center">
-                <div className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-[url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080')] bg-cover bg-center bg-no-repeat">
+                <div
+                  className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-cover bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `url(${
+                      profileData?.image
+                        ? BASE_URL.replace("api/v1/","") + profileData?.image
+                        : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                    })`,
+                  }}
+                  //  className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-[url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080')] bg-cover bg-center bg-no-repeat"
+                >
                   <div className="bg-white/90 rounded-full w-6 h-6 text-center ml-28 mt-4">
                     <input
                       type="file"
@@ -160,6 +208,7 @@ function UpdateProfilePage() {
                       id="upload_profile"
                       hidden
                       required
+                      onChange={handleImageChange}
                     />
                     <label htmlFor="upload_profile">
                       <svg
@@ -246,7 +295,7 @@ function UpdateProfilePage() {
                   </>
                 )}
               </h2>
-              <form>
+              <form onSubmit={validation.handleSubmit}>
                 <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
                   <div className="w-full  mb-4 mt-6">
                     <label
@@ -261,10 +310,9 @@ function UpdateProfilePage() {
                       name="username"
                       className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                       placeholder="User name"
-                      value={validation.values.email}
+                      value={validation.values.username}
                       onBlur={validation.handleBlur}
                       onChange={validation.handleChange}
-                      
                     />
                   </div>
                   <div className="w-full  mb-4 lg:mt-6">
@@ -287,7 +335,7 @@ function UpdateProfilePage() {
                 </div>
 
                 <div className="w-full rounded-lg bg-blue-500 mt-4 text-white text-lg font-semibold">
-                  <button disabled type="submit" className="w-full p-4">
+                  <button type="submit" className="w-full p-4">
                     Submit
                   </button>
                 </div>
